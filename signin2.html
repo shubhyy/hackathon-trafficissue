@@ -1,0 +1,129 @@
+<html>
+<head>
+
+ <title>Sign In</title>  
+   <meta charset="UTF-8"> 
+   <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+  <script src="https://cdn.firebase.com/libs/firebaseui/2.3.0/firebaseui.js"></script>
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.3.0/firebaseui.css" />   
+</head>
+
+<style type="text/css">
+  body{
+    background: url(bg.jpg);
+       background-size: 1280px 660px;
+    background-repeat: no-repeat;
+
+  }
+</style>
+
+
+<script type="text/javascript">  
+  var config = {
+    apiKey: "AIzaSyDYsfAkFdtPKn5jPBjC5TCtebVh04KPSmk",
+    authDomain: "travelbuddy-3bd1b.firebaseapp.com",
+    databaseURL: "https://travelbuddy-3bd1b.firebaseio.com",
+    projectId: "travelbuddy-3bd1b",
+    storageBucket: "",
+    messagingSenderId: "388402880722"
+  };
+  firebase.initializeApp(config);
+
+
+
+var database = firebase.database();
+
+    var uiConfig = {  
+     signInSuccessUrl: 'main.html',  
+     signInOptions: [  
+      // Specify providers you want to offer your users.  
+    {
+        provider:           firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+      
+},    
+    
+    
+     ],  
+     // Terms of service url can be specified and will show up in the widget.  
+     tosUrl: '<your-tos-url>'  
+    };  
+    // Initialize the FirebaseUI Widget using Firebase.  
+    var ui = new firebaseui.auth.AuthUI(firebase.auth());  
+    // The start method will wait until the DOM is loaded.  
+    ui.start('#firebaseui-auth-container', uiConfig);  
+  
+  var currentUid = null;  
+  //var user = firebase.auth().currentUser;
+  
+  var user = firebase.auth().currentUser;
+var name, email, photoUrl, uid, emailVerified,typeText;
+
+window.onload = function() {
+  //var checkType=localStorage.getItem("Company");
+//document.getElementById('type').textContent = checkType;
+
+//var skillsSelect = document.getElementById("type");
+//var selectedText = skillsSelect.options[skillsSelect.selectedIndex].text;
+ //ypeText = selectedText;
+ 
+ //document.getElementById("checkT").innerHTML = selectedText;
+ //console.log(typeText);
+
+firebase.auth().onAuthStateChanged(function(user) {
+//console.log(typeText);
+
+if (user != null) {
+  no=user.phoneNumber;
+ //Firebase project. Do NOT use
+                   // this value to authenticate with your backend server, if
+                   // you have one. Use User.getToken() instead.
+           
+               //   document.getElementById('textName').textContent = name;
+              console.log(name);
+               console.log("Y");
+        var i=  localStorage.getItem("userUid");
+       
+  writeUserData(no,i);              
+  
+ // localStorage.setItem("userName",name);
+   //localStorage.setItem("userEmail",email);
+   //localStorage.setItem("userPhotoUrl",photoURL);
+   //localStorage.setItem("emailVerified",emailVerified);
+   console.log("Y");
+   console.log(photoUrl);
+}
+
+if (user==null)
+{
+              console.log("N");
+
+}
+});
+}
+  
+  function writeUserData(num,uid) {
+
+
+     firebase.database().ref('Student/' + uid).update({
+     number:num,
+
+   
+  });
+
+
+  // Get a key for a new Post.
+  // Write the new post's data simultaneously in the posts list and the user's post list.
+}
+
+
+ </script>
+ <body>  
+       <h1 align="center" style="color:black;">Welcome to TravelBuddy!</h1>  
+<center>
+    <h3>Step 2</h3>
+  
+    </center>
+
+</div>  <div id="firebaseui-auth-container"></div>  
+  </body> 
+</html>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head class=" mdc-typograph">
+      <title> TravelBuddy </title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link href='same.css' rel='stylesheet' type='text/css'>
+      <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+      <link
+         rel="stylesheet"
+         href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+      <link rel ="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+      <link rel ="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Raleway:400,700,600,500,300,200,100,800,900">
+   </head>
+   <style type="text/css">
+   </style>
+   <body  ng-app="myApp"  id="myPage" data-spy="scroll" data-target=".navbar" data-offset="60">
+      <nav class="navbar navbar-default navbar-fixed-top">
+         <div class="container">
+            <div class="navbar-header">
+               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span> 
+               </button>
+               <a class="navbar-brand" href="#">Logo</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+               <ul class="nav navbar-nav navbar-left">
+                  <li><a href="new.html">Home</a></li>
+                  <li><a href="receive.html">Received Requests</a></li>
+                  <li><a href="sent.html">Sent Requests</a></li>
+                  <li><a href="friend.html">Friends</a></li>
+               </ul>
+               <ul ng-controller="userController as userCtrl"  class="nav navbar-nav navbar-right">
+                  <li class="dropdown">
+                     <a class="dropdown-toggle" data-toggle="dropdown" href="#login"><span id="photo" class="glyphicon glyphicon-user"></span>
+                     <span class="caret"></span></a>
+                     <ul class="dropdown-menu">
+                        <li ><a id="textName" href="#">My Name</a></li>
+                        <li><a id="gallery" href="hack_myaccount.html">My Account</a></li>
+                        <li ><a id="log-out" href="#">Log Out</a></li>
+                     </ul>
+                  </li>
+               </ul>
+            </div>
+         </div>
+      </nav>
+      <div id="events" class= "container-fluid bg-white eventcls">
+         <div class="row">
+            <br><br><br><br><br>
+            <div class="col-sm-12">
+               <table class="table table-bordered id="ex-table">
+                  <thead class="t">
+                     <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>Number</th>
+                        <th> Request</th>
+                     </tr>
+                  </thead>
+                  <tbody id="childTableTag">
+                  </tbody>
+               </table>
+            </div>
+         </div>
+      </div>
+      <nav class="navbar navbar-default navbar-fixed-bottom">
+         <div class="container">
+            <div class="navbar-header">
+               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span> 
+               </button>
+               <a class="navbar-brand" href="#">Logo</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+               <ul class="nav navbar-nav navbar-left">
+                  <li><a href="#home">Privacy</a></li>
+                  <li><a href="#events">Contact Us</a></li>
+                  <li><a href="#about">Careers</a></li>
+                  <li><a href="#about">Terms</a></li>
+                  <li><a href="#about">About</a></li>
+                  <li><a href="#about">Help</a></li>
+               </ul>
+            </div>
+         </div>
+      </nav>
+   </body>
+   <script>
+      var config = {
+       apiKey: "AIzaSyDYsfAkFdtPKn5jPBjC5TCtebVh04KPSmk",
+       authDomain: "travelbuddy-3bd1b.firebaseapp.com",
+       databaseURL: "https://travelbuddy-3bd1b.firebaseio.com",
+       projectId: "travelbuddy-3bd1b",
+       storageBucket: "",
+       messagingSenderId: "388402880722"};
+      firebase.initializeApp(config);
+            var mData = firebase.database().ref().child("Student");
+      
+      
+      var mEmail,userId,y,tableUID;
+      //    var user = firebase.auth().currentUser;
+          userId=localStorage.getItem("userUid");
+         console.log(userId);
+         //var name, email, photoUrl, uid, emailVerified;
+            var database = firebase.database();
+         
+                
+                      window.onload =    function(){
+      
+                  firebase.database().ref('Student/' + userId).once('value').then(function(snapshot) {
+          var username = (snapshot.val() && snapshot.val().username);
+          var photoUrl = (snapshot.val() && snapshot.val().profile_picture);
+          mEmail = (snapshot.val() && snapshot.val().email);
+      
+           document.getElementById('textName').textContent = username;  // ...
+           document.getElementById('photo').source = photoUrl;
+           console.log(photoUrl);
+                                console.log (mEmail);
+      
+           display(mEmail);
+           
+      
+           
+         });
+         
+             
+         function display(e){
+         database.ref('/Student/').once('value', function(snapshot){
+         
+      
+                if(snapshot.exists()){
+      
+      
+                    var content = '';
+                    snapshot.forEach(function(data){
+                        var val = data.val();
+      
+                      
+                       
+                          if(val.email!=e){
+      
+                           
+                        content +='<tr>';
+                        content += '<td>' + val.username + '</td>';
+      
+                      
+                        content += '<td>' + val.email + '</td>';
+                     
+                        content += '<td>' + val.address + '</td>';
+                       
+                   content += '<td>Not Available</td>';
+                        
+      
+                        content += '<td> <button class="w3-hover-green w3-round-xlarge b">Request</button></td>'   ;
+      
+                        content += '</tr>';
+                     
+               
+               }
+               
+             //   rows += "<tr><td>" + this.Name + "</td><td>" + this.Price + "</td><td>" + this.Quantity + "</td><td>" + this.Total + "</td></tr>";
+         
+                    });
+               //  $( content ).appendTo("ex-table tbody");
+            
+              $("#childTableTag").append(content);}   
+           //document.getElementById(childTableTag).append(content);
+         
+                
+            });
+           
+         
+                   //  console.log(name);
+                  }
+                  $(document).on('click', 'th, td', function(e) {
+       var index_row = $(this).closest('tr').index(),
+           index_column = $(this).index();
+       console.log(index_column);
+      
+       //   document.getElementById("ex-table").rows[0].cells.item(0).innerHTML;
+      
+      if(index_column==4){
+             userId=localStorage.getItem("userUid");
+      console.log(userId);
+              y= document.getElementById("childTableTag").rows[index_row].cells[1].textContent;
+       console.log(y);
+                                    console.log (mEmail);
+      
+      
+      firebase.database().ref('Student/').orderByChild('email').equalTo(y).on("value", function(snapshot) {
+      
+      
+       snapshot.forEach(function(data) {
+          // console.log();
+           //writeDat(mEmail,userId,y,data.key);
+           tableUID = data.key;
+       console.log(tableUID);
+      
+       setTableId(tableUID);
+      
+       });
+           console.log(tableUID);
+      writeSend(tableUID);
+      
+      /* var udata = snapshot.val();
+       console.log(udata);
+      
+      
+       var updates = {};
+      updates['/SentRequests/'+userId +'/'+ tableUID+'/'] = udata;
+      
+      firebase.database().ref().update(updates);
+      */
+      writeRec(tableUID);
+      
+      
+      
+      
+      });
+       
+      
+      
+      }
+      
+      function setTableId(i){
+      tableUID = i;
+      }
+      
+      function getTableId(){
+      return tableUID;
+      }  
+      
+      
+      function writeRec(mtable){
+      
+      firebase.database().ref('Student/').child(userId).on("value", function(snapshot) {
+       console.log(snapshot.val());
+       var udata = snapshot.val();
+      
+      
+       var updates = {};
+      updates['/ReceiveRequests/'+mtable +'/'+ userId+'/'] = udata;
+      firebase.database().ref().update(updates);
+      
+      alert('Request send successfully');
+      
+      /*
+       snapshot.forEach(function(data) {
+          // console.log();
+           //writeDat(mEmail,userId,y,data.key);
+      
+       });
+       */
+      });
+      }
+      
+      function writeSend(mtable){
+      
+      firebase.database().ref('Student/').child(mtable).on("value", function(snapshot) {
+       console.log(snapshot.val());
+       var udata = snapshot.val();
+      
+      
+       var updates = {};
+      updates['/SentRequests/'+userId +'/'+ mtable+'/'] = udata;
+      firebase.database().ref().update(updates);
+      
+      /*
+       snapshot.forEach(function(data) {
+          // console.log();
+           //writeDat(mEmail,userId,y,data.key);
+      
+       });
+       */
+      });
+      
+      }
+      
+      
+      
+      //   mData.child(userId)
+      });
+      
+      //     var x = document.getElementById("childTableTag").rows[index_row].cells;
+      //x[4].innerHTML = "Requested";
+      
+      
+      }
+               
+      
+      function writeDat(mEmaill,userId,num,userIdTo) {
+      console.log(num);
+      // A post entry.
+      
+      
+      
+        firebase.database().ref('Student/' + userId).child('Request').child(userIdTo).update({
+         flag:0,
+         email:num,
+        
+      });
+      
+      
+        firebase.database().ref('Student/' + userIdTo).child('Request').child(userId).update({
+         flag:0,
+         email:mEmaill,
+        
+      });
+      
+      
+      // var updates = {};
+      // updates['/Student/' + userId +'/Request'] = postData;
+      
+      //updates['/user-posts/' + uid + '/' + newPostKey] = postData;
+      
+      }
+      
+      
+      
+                  document.getElementById('log-out').onclick = function()
+                  {
+                  firebase.auth().signOut().then(function() {
+          // Sign-out successful.
+            localStorage.setItem("userUid"," ");
+          
+         window.location.replace("signin.html");
+         
+          
+         }).catch(function(error) {
+          // An error happened.
+         });
+                  };
+                  
+                  
+         
+   </script>  
+</html>

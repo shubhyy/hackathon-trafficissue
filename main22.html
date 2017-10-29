@@ -1,0 +1,281 @@
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+   <script type="application/javascript" src="grahamscan.js" ></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+ 
+<style type="text/css">
+    #map_canvas {
+        height: 100%;
+        width: 100%;
+        position: static;
+    }
+</style>
+
+<script type="text/javascript">
+var mAdd,mLan,mLat;
+var config = {
+    apiKey: "AIzaSyDYsfAkFdtPKn5jPBjC5TCtebVh04KPSmk",
+    authDomain: "travelbuddy-3bd1b.firebaseapp.com",
+    databaseURL: "https://travelbuddy-3bd1b.firebaseio.com",
+    projectId: "travelbuddy-3bd1b",
+    storageBucket: "",
+    messagingSenderId: "388402880722"
+  };
+  firebase.initializeApp(config);
+
+
+    var marker;
+    var currgeocoder;
+    function initialize() {
+        var latlng = new google.maps.LatLng(18.529396, 73.856574);
+
+        var myOptions = {
+            zoom: 12,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            streetViewControl: false,
+            mapTypeControl: false
+        };
+
+        var map = new google.maps.Map(document.getElementById("map_canvas"),
+                myOptions);
+
+        google.maps.event.addListener(map, 'click', function(event) {
+            placeMarker(event.latLng);
+            initializeCurrent(event.latLng.lat(), event.latLng.lng());
+            mLat=event.latLng.lat();
+            mLan=event.latLng.lng();
+            console.log(mLat);
+            console.log(mLan);
+
+
+        });
+
+        function placeMarker(location) {
+            if (marker == undefined){
+                marker = new google.maps.Marker({
+                    position: location,
+                    map: map, 
+                    animation: google.maps.Animation.BOUNCE,
+                    draggable: true
+                });
+            }
+            else{
+                marker.setPosition(location);                
+            }
+            map.setCenter(location);
+        }
+
+        function initializeCurrent(latcurr, longcurr) {
+             currgeocoder = new google.maps.Geocoder();
+
+             if (latcurr != '' && longcurr != '') {
+                 var myLatlng = new google.maps.LatLng(latcurr, longcurr);
+                 return getCurrentAddress(myLatlng);
+             }
+        }
+ 
+        //Get current address
+
+         function getCurrentAddress(location) {
+              currgeocoder.geocode({
+                  'location': location
+
+            }, function(results, status) {
+           
+                if (status == google.maps.GeocoderStatus.OK) {
+                    console.log(results[0]);
+                    $("#address").html(results[0].formatted_address);
+                    mAdd = results[0].formatted_address;
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+    }
+
+   var points = new Array();
+   var arr_store = [];
+   var diff_arr = [];
+   var a,b,c;
+   var count=0;
+    var numpoints;
+   
+   function myfun()
+   {
+      for(var i=0;i<(points.length-1);i++)
+      {
+         if(isInside(18.529396, 73.856574,points[i].x,points[i].y,points[(i+1)].x,points[(i+1)].y,18.529644, 73.856779)){
+            console.log((i)+"sector alloted");
+         }
+         else
+            console.log("hello");
+      }
+      Array.min = function( array ){
+         return Math.min.apply( Math, array );
+      };
+      var min=Array.min(diff_arr);
+      for(var i=0;i<diff_arr.length;i++)
+      {
+         if(min==diff_arr[i])
+            break;
+      }
+      alert("Sector number: "+i);
+   }
+   function area(x1,y1,x2,y2,x3,y3)
+   {
+      return Math.abs((x1*(y2-y3) + x2*(y3-y1)+ x3*(y1-y2))/2);
+   }
+   function isInside(x1,y1,x2,y2,x3,y3,x,y)
+   {
+      var p1,q1,p2,q2,p3,r3,px,py;
+      var p1 = parseFloat(x1);
+      var q1 = parseFloat(y1);
+      var p2 = parseFloat(x2);
+      var q2 = parseFloat(y2);
+      var p3 = parseFloat(x3);
+      var q3 = parseFloat(y3);
+      var px = parseFloat(x);   
+      var py = parseFloat(y);
+      /* Calculate area of triangle ABC */
+      var A = parseFloat(area (p1, q1, p2, q2, p3, q3));
+      /* Calculate area of triangle PBC */  
+      var A1 =parseFloat( area (px, py, p2, q2, p3, q3));
+      /* Calculate area of triangle PAC */  
+      var A2 = parseFloat(area (p1, q1, px, py, p3, q3));
+      /* Calculate area of triangle PAB */   
+      var A3 = parseFloat(area (p1, q1, p2, q2, px, py));
+      /* Check if sum of A1, A2 and A3 is same as A */
+      console.log(A + "Area function");
+      console.log((A1+A2+A3) + "Calculated");
+      arr_store.push(A);
+      arr_store.push((A1+A2+A3));
+      //console.log(arr_store);
+      A = A.toFixed(7);
+      var Z = (A1 + A2 + A3).toFixed(7);
+      return (A == Z);
+   }
+
+    function dot(ctx, point, style) {
+       ctx.save();
+       ctx.fillStyle = style;
+       ctx.beginPath();
+       ctx.arc(point.x, point.y, 2, 0, Math.PI*2, true); 
+       ctx.closePath();
+       ctx.fill();
+       ctx.restore();
+    }
+
+    function draw() {
+       var canvas = document.getElementById("canvas");
+       var ctx = canvas.getContext("2d");
+       ctx.save();
+       ctx.setTransform(1, 0, 0, 1, 0, 0);
+       ctx.clearRect(0, 0, canvas.width, canvas.height);
+       ctx.restore();
+       for (var i=0; i<points.length; i++) {
+          dot(ctx, points[i], "rgba(0, 128, 0, 0.8)");
+       }
+    }
+
+   function findHull() {
+      var canvas = document.getElementById("canvas");
+      var ctx = canvas.getContext("2d");
+      var hull = new ConvexHull();
+      hull.compute(points);
+      var indices = hull.getIndices();
+      if (indices && indices.length>0) {
+         ctx.beginPath();
+         ctx.moveTo(points[indices[0]].x,points[indices[0]].y);
+         for (var i=1; i<indices.length; i++) {
+            ctx.lineTo(points[indices[i]].x,points[indices[i]].y);
+         }
+         ctx.closePath();
+         ctx.fillStyle = "rgba(200, 0, 0, 0.2)";
+         ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
+         ctx.fill();
+         ctx.stroke();
+         for (var i=0; i<indices.length; i++) {
+            dot(ctx, points[indices[i]], "rgba(200, 0, 0, 0.8)");
+         }
+         
+      }
+   }
+
+
+
+
+
+   function generate() {
+           points=new Array();
+    var database = firebase.database();
+
+    database.ref().child('Student').once('value', function(snapshot){
+        if(snapshot.exists()){
+            var content = '';
+            snapshot.forEach(function(data){
+                var val = data.val();
+                a=val.latitude;
+                b=val.longitutde;
+                console.log(a);
+                var pt = {x: a, y: b};
+                points.push(pt);
+                console.log(points);
+            });
+        }
+    });
+  }                                 
+
+      
+
+</script>
+</head>
+
+<body onload="initialize()">
+    <div class="w3-row w3-light-blue w3-center w3-xxlarge">Select your area
+    <div class="w3-panel w3-teal w3-large w3-round-xxlarge" id="address" style="width: 40%;margin-left: 30%">
+
+    </div>         
+    <button class="w3-btn w3-round-xlarge w3-xlarge w3-hover-green" id="sub" onclick="javascript:draw();findHull();myfun();return false;">Submit</button>
+   <canvas id="canvas" style="display: none;" width="300" class="w3-border" height="300"></canvas>
+   <br />
+   <input id="numpoints" style="display: none;" type="text" value="100" size="4" />
+   <button onclick="javascript:generate();draw();return false;" style="display: none;">Generate new set of points</button>
+   &nbsp;&nbsp;
+   <button style="display: none;" onclick="javascript:draw();findHull();return false;">Find convex hull</button>
+
+</div>
+<div id="map_canvas" class="w3-display-middle w3-round-xlarge"></div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-Gg_vzmdtbKMm5LzxeZygUP3eWyikpsk&callback =initMap"
+    async defer></script>
+</body>
+<script type="text/javascript">
+
+    document.getElementById('next').onclick =  function(){
+     console.log("hi" + mLan+mLat + mAdd);
+var id =  localStorage.getItem("userUid");
+console.log(id);
+     var firebaseRef= firebase.database();
+
+     firebaseRef.ref('Student/' + id).update({
+      longitutde:mLan,
+      latitude:mLat,
+      address:mAdd
+
+   
+  }).then(function(){
+    window.location  = 'index.html'
+  });
+
+ }
+ // $('#sub').click(function(){
+ //    if($('#address').html()==null)
+ //    {
+ //      alert('null value');
+ //    }
+ // });
+</script>
+</html>

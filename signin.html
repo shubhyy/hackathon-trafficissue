@@ -1,0 +1,141 @@
+<html>
+<head>
+
+ <title>Sign In</title>  
+   <meta charset="UTF-8"> 
+   <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+  <script src="https://cdn.firebase.com/libs/firebaseui/2.3.0/firebaseui.js"></script>
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.3.0/firebaseui.css" />   
+</head>
+<style type="text/css">
+  body{
+    background: url(bg.jpg);
+       background-size: 1280px 660px;
+    background-repeat: no-repeat;
+
+  }
+</style>
+
+
+
+<script type="text/javascript">  
+ var config = {
+    apiKey: "AIzaSyDYsfAkFdtPKn5jPBjC5TCtebVh04KPSmk",
+    authDomain: "travelbuddy-3bd1b.firebaseapp.com",
+    databaseURL: "https://travelbuddy-3bd1b.firebaseio.com",
+    projectId: "travelbuddy-3bd1b",
+    storageBucket: "",
+    messagingSenderId: "388402880722"
+  };
+  firebase.initializeApp(config);
+
+
+
+var database = firebase.database();
+
+    var uiConfig = {  
+     signInSuccessUrl: 'signin2.html',  
+     signInOptions: [  
+      // Specify providers you want to offer your users.  
+    {
+        provider: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        scopes: [
+    'https://www.googleapis.com/auth/plus.login',
+    //'https://www.googleapis.com/auth/contacts.readonly'
+    ]
+},    
+    {
+        provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        // Whether the display name should be displayed in Sign Up page.
+        requireDisplayName: true
+      },
+    
+     ],  
+     // Terms of service url can be specified and will show up in the widget.  
+     tosUrl: '<your-tos-url>'  
+    };  
+    // Initialize the FirebaseUI Widget using Firebase.  
+    var ui = new firebaseui.auth.AuthUI(firebase.auth());  
+    // The start method will wait until the DOM is loaded.  
+    ui.start('#firebaseui-auth-container', uiConfig);  
+  
+  var currentUid = null;  
+  //var user = firebase.auth().currentUser;
+  
+  var user = firebase.auth().currentUser;
+var name, email, photoUrl, uid, emailVerified,typeText,number;
+
+window.onload = function() {
+  //var checkType=localStorage.getItem("Company");
+//document.getElementById('type').textContent = checkType;
+
+//var skillsSelect = document.getElementById("type");
+//var selectedText = skillsSelect.options[skillsSelect.selectedIndex].text;
+ //ypeText = selectedText;
+ 
+ //document.getElementById("checkT").innerHTML = selectedText;
+ //console.log(typeText);
+
+firebase.auth().onAuthStateChanged(function(user) {
+//console.log(typeText);
+
+if (user != null) {
+  name = user.displayName;
+  number=user.phoneNumber;
+  email = user.email;
+  photoUrl = user.photoURL;
+  emailVerified = user.emailVerified;
+  uid = user.uid;  // The user's ID, unique to the Firebase project. Do NOT use
+                   // this value to authenticate with your backend server, if
+                   // you have one. Use User.getToken() instead.
+           
+               //   document.getElementById('textName').textContent = name;
+              console.log(name);
+               console.log("Y");
+               
+  writeUserData(name,email,photoUrl,emailVerified,uid,number);              
+  
+ // localStorage.setItem("userName",name);
+   //localStorage.setItem("userEmail",email);
+   //localStorage.setItem("userPhotoUrl",photoURL);
+  localStorage.setItem("userUid",uid);
+   //localStorage.setItem("emailVerified",emailVerified);
+   console.log("Y");
+   console.log(photoUrl);
+}
+
+if (user==null)
+{
+              console.log("N");
+
+}
+});
+}
+  
+  function writeUserData(fname,femail,fphotoUrl,femailVerified,fuid,fnumber) {
+  
+  database.ref('Student/' + fuid).update({
+    id:fuid,
+    username: fname,
+    email: femail,
+    profile_picture : fphotoUrl,
+  verified:femailVerified,
+  number:fnumber,
+  section:-1,
+
+  });
+}
+
+
+ </script>
+ <body>  
+       <h1 align="center" style="color:black;">Welcome to TravelBuddy!</h1>  
+<center>
+    <h3>Step1</h3>
+  
+    </center>
+
+</div>  <div id="firebaseui-auth-container"></div>  
+  </body> 
+
+</html>
